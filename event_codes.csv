@@ -1,0 +1,101 @@
+code,desc
+0,Phase On
+1,Phase Begin Green
+2,Phase Check
+3,Phase Min Complete
+4,Phase Gap Out
+5,Phase Max Out
+6,Phase Force Off
+7,Phase Green Termination
+8,Phase Begin Yellow Clearance
+9,Phase End Yellow Clearance
+10,Phase Begin Red Clearance
+11,Phase End Red Clearance
+12,Phase Inactive
+21,Pedestrian Begin Walk
+22,Pedestrian Begin Clearance
+23,Pedestrian Begin Solid Don’t Walk
+24,Pedestrian Dark
+31,Barrier Termination
+32,FYA – Begin Permissive
+33,FYA – End Permissive
+41,Phase Hold Active
+42,Phase Hold Released
+43,Phase Call Registered
+44,Phase Call Dropped
+45,Pedestrian Call Registered
+46,Phase Omit On
+47,Phase Omit Off
+48,Pedestrian Omit On
+49,Pedestrian Omit Off
+61,Overlap Begin Green
+62,Overlap Begin Trailing Green (Extension)
+63,Overlap Begin Yellow
+65,Overlap Off (Inactive with red indication)
+66,Overlap Dark
+67,Pedestrian Overlap Begin Walk
+68,Pedestrian Overlap Begin Clearance
+69,Pedestrian Overlap Begin Solid Don’t Walk
+70,Pedestrian Overlap Dark
+81,Detector Off
+82,Detector On
+83,Detector Restored
+84,Detector Fault- Other
+85,Detector Fault- Watchdog Fault
+86,Detector Fault- Open Loop Fault
+87,Detector Fault- Shorted Loop Fault
+88,Detector Fault- Excessive Change Fault
+89,PedDetector Off
+90,PedDetector On
+91,Pedestrian Detector Failed
+92,Pedestrian Detector Restored
+101,Preempt Advance Warning Input
+102,Preempt (Call) Input On
+103,Preempt Gate Down Input Received
+104,Preempt (Call) Input Off
+105,Preempt Entry Started
+106,Preemption Begin Track Clearance
+107,Preemption Begin Dwell Service
+108,Preemption Link Active On
+109,Preemption Link Active Off
+110,Preemption Max Presence Exceeded
+111,Preemption Begin Exit Interval
+112,TSP Check In
+113,TSP Adjustment to Early Green
+114,TSP Adjustment to Extend Green
+115,TSP Check Out
+131,Coord Pattern Change
+132,Cycle Length Change
+133,Offset Length Change
+134,Split 1 Change
+135,Split 2 Change
+136,Split 3 Change
+137,Split 4 Change
+138,Split 5 Change
+139,Split 6 Change
+140,Split 7 Change
+141,Split 8 Change
+142,Split 9 Change
+143,Split 10 Change
+144,Split 11 Change
+145,Split 12 Change
+146,Split 13 Change
+147,Split 14 Change
+148,Split 15 Change
+149,Split 16 Change
+150,Coord cycle state change
+151,Coordinated phase yield point
+171,Test Input on
+172,Test Input off
+173,Unit Flash Status change
+174,Unit Alarm Status 1 change
+175,Alarm Group State Change
+176,Special Function Output on
+177,Special Function Output off
+178,Manual control enable off/on
+179,Interval Advance off/on
+180,Stop Time Input off/on
+181,Controller Clock Updated
+182,Power Failure Detected
+184,Power Restored
+185,Vendor Specific Alarm
