@@ -58,7 +58,7 @@ car_count['Time'] = car_count.Timestamp.dt.time #time column
 car_count.Timestamp.value_counts().sort_index()
 
 car_count.set_index('Timestamp', drop=False, inplace=True)
-car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(kind='bar', y='SignalID', figsize=(30,15)) #number of occurrences in a 15min interval
+car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(kind='bar', y='SignalID', figsize=(10,5)) #number of occurrences in a 15min interval
 
 car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences in an hour
 
@@ -72,9 +72,15 @@ car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences i
 #    print(row['Timestamp'], row['Signal'])
 
 #trying to get the duration of an event     
-signal = data.loc[data.Signal=='CR 4 @ CR 17', :] 
-dur = signal.Timestamp.diff()
-signal['duration'] = dur.dt.seconds.div(60, fill_value=0)
-signal.plot(x='Timestamp', y='duration', style='o', figsize=(30,15))
+signal = data.loc[data.Signal=='Beck @ CR17', :] 
 
 
+
+
+cycle = signal.loc[signal['EventCodeID'].isin([1,7,8,9,10,11])]
+
+lane = cycle.loc[(signal['Param'] == 6)]
+
+dur = lane.Timestamp.diff()
+lane['duration'] = dur.dt.seconds.div(60,fill_value=0)
+lane.plot(x='Timestamp', y='duration', style='o', figsize=(10,5))
