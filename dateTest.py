@@ -108,19 +108,19 @@ red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the durati
 
 
 #---------------- Compare detection systems __________________________________
-hour = signal.loc[signal.hour==12,:]
+hour = signal.loc[signal.hour==3,:]
 compare = hour.loc[hour['EventCodeID'].isin([81,82])]
 #graph a comparison between parameters when the detector is on and off
-#pd.value_counts(compare['Param']).plot.bar()
+#pd.value_counts(compare['Param']).plot.bar(figsize=(35,15))
 test = ks_2samp(compare.count(), car_count.count())
 
 call = signal.loc[signal.EventCodeID==43, :]
-#call.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title='Call Counts', figsize=(35,15))
 
 
-plt.figure(figsize=(100,50))
+
+plt.figure(figsize=(35,15))
 plt.ylim(81, 82.5)
-compare_det = compare.loc[compare.Param==20,:]
+compare_det = compare.loc[compare.Param==27,:]
 step(compare_det.Timestamp, compare_det.EventCodeID)
 show()
 
