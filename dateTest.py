@@ -1,22 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Feb 19 21:19:20 2019
-
-@author: kabut
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Feb 19 13:54:17 2019
 
 @author: mvaldez2
 """
 import pandas as pd
-
-
+from scipy.stats import ks_2samp
+import numpy as np
+from matplotlib.pyplot import step, show
 
 pd.options.display.max_columns = 50
-    
 
 #-------------------- Importing data ------------------------------------------    
 file = 'ECH_2015_01_15_data.csv' #download the huge file
@@ -35,7 +28,9 @@ data.sort_values("Timestamp", inplace=True)
 data['Timestamp'] = pd.to_datetime(data.Timestamp) #converts Timestamp to datetime object
 data['Signal'] = data['SignalID'].map(signals.set_index('SignalID')['Signal']) #adds signalid name column
 data['event'] = data['EventCodeID'].map(event_codes.set_index('code')['desc']) #adds event name column
-data['day'] = data['Timestamp'].dt.day_name()
+#data['day'] = data['Timestamp'].dt.day_name()
+data['hour'] = data['Timestamp'].dt.hour
+
 
 data.event.value_counts() #get the occurrences of events
 #data.event.value_counts().plot(kind='bar', figsize=(30,15)) #plot
@@ -50,7 +45,7 @@ car_count['Time'] = car_count.Timestamp.dt.time #time column
 car_count.Timestamp.value_counts().sort_index()
 
 car_count.set_index('Timestamp', drop=False, inplace=True)
-car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title='Detector Counts',kind='bar', y='SignalID', figsize=(10,5)) #number of occurrences in a 15min interval
+car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title='Detector Counts',kind='bar', y='SignalID', figsize=(35,15)) #number of occurrences in a 15min interval
 
 
 
@@ -68,11 +63,11 @@ car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences i
 #trying to get the duration of an event     
 signal = data.loc[data.Signal=='CR6 @ CR17', :] #gets one signal 
 
-signal.loc[data.EventCodeID==82, :].groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='Signal Detector Counts', kind='bar', y='SignalID', figsize=(10,5))
+#signal.loc[data.EventCodeID==82, :].groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='Signal Detector Counts', kind='bar', y='SignalID', figsize=(10,5))
 
 #how do I check the split change for a lane?
 split = signal.loc[signal['EventCodeID'].isin([134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149])] #split events
-split.groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='splits', kind='bar', y='SignalID', figsize=(10,5))
+#split.groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='splits', kind='bar', y='SignalID', figsize=(10,5))
 
 cycle = signal.loc[signal['EventCodeID'].isin([1,7,8,9,10,11])] #light phases in the signal
 
@@ -91,13 +86,13 @@ green_cycle.loc[green_cycle.duration>green_cycle.duration.mean(), :] #times the 
 
 #yellow cycle
 yellow_cycle = lane.loc[signal['EventCodeID'].isin([8,9,10])]
-yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(10,5), color='y')
+yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(35,15), color='y')
 yellow_cycle.duration.describe() #5 number summary of yellow cycle length
 yellow_cycle.loc[yellow_cycle.duration>yellow_cycle.duration.mean(), :] #times the duration is greater than average
 
 #red cycle
 red_cycle = lane.loc[signal['EventCodeID'].isin([10,11])]
-red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(10,5), color='r')
+red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(35,15), color='r')
 red_cycle.duration.describe() #5 number summary of red cycle length
 red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the duration is greater than average
 
@@ -111,3 +106,23 @@ red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the durati
 
     
 
+
+#---------------- Compare detection systems __________________________________
+hour = signal.loc[signal.hour==12,:]
+compare = hour.loc[hour['EventCodeID'].isin([81,82])]
+#graph a comparison between parameters when the detector is on and off
+#pd.value_counts(compare['Param']).plot.bar()
+test = ks_2samp(compare.count(), car_count.count())
+
+call = signal.loc[signal.EventCodeID==43, :]
+#call.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title='Call Counts', figsize=(35,15))
+
+
+plt.figure(figsize=(100,50))
+plt.ylim(81, 82.5)
+compare_det = compare.loc[compare.Param==20,:]
+step(compare_det.Timestamp, compare_det.EventCodeID)
+show()
+
+#create a column that contains the hour
+#use that hour to graph in dataframe
