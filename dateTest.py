@@ -7,6 +7,7 @@ Created on Tue Feb 19 13:54:17 2019
 import pandas as pd
 from scipy.stats import ks_2samp
 import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib.pyplot import step, show
 
 pd.options.display.max_columns = 50
@@ -85,7 +86,7 @@ green_cycle.duration.describe() #5 number summary of green cycle length
 green_cycle.loc[green_cycle.duration>green_cycle.duration.mean(), :] #times the duration is greater than average
 
 #yellow cycle
-yellow_cycle = lane.loc[signal['EventCodeID'].isin([8,9,10])]
+yellow_cycle = lane.loc[signal['EventCodeID'].isin([8,9])]
 yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(35,15), color='y')
 yellow_cycle.duration.describe() #5 number summary of yellow cycle length
 yellow_cycle.loc[yellow_cycle.duration>yellow_cycle.duration.mean(), :] #times the duration is greater than average
@@ -121,8 +122,14 @@ call = signal.loc[signal.EventCodeID==43, :]
 plt.figure(figsize=(35,15))
 plt.ylim(81, 82.5)
 compare_det = compare.loc[compare.Param==27,:]
-step(compare_det.Timestamp, compare_det.EventCodeID)
+compare_det2 = compare.loc[compare.Param==20,:]
+step(compare_det.Timestamp, compare_det.EventCodeID,compare_det2.Timestamp, compare_det2.EventCodeID)
 show()
+plt.figure(figsize=(35,15))
+splitf = signal.loc[signal['EventCodeID'].isin([10,43,44])]
+split_lane = splitf.loc[(splitf['Param'] == 6) & (splitf.hour==3)]
+step(split_lane.Timestamp, split_lane.EventCodeID)
+
 
 #create a column that contains the hour
 #use that hour to graph in dataframe
