@@ -52,7 +52,8 @@ car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title=
 
 car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences in an hour
 
-
+busy = pd.crosstab(car_count['event'], car_count['Signal'])
+busy.style
 
 #_______________________________ Analysis _____________________________________
 #how to loop through dataframe
@@ -60,7 +61,7 @@ car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences i
 #    print(row['Timestamp'], row['Signal'])
 
      
-signal = data.loc[data.Signal=='Reith @ CR 17', :] #gets one signal 
+signal = data.loc[data.Signal=='Beck @ CR17', :] #gets one signal 
 #signal.loc[data.EventCodeID==82, :].groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='Signal Detector Counts', kind='bar', y='SignalID', figsize=(10,5))
 
 
@@ -107,7 +108,7 @@ red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the durati
 
 
 #---------------- Compare detection systems -----------------------------------
-interval = signal.loc[(signal['hour'] == 6) & (signal.minute==45)]
+interval = signal.loc[(signal['hour'] == 1) & (signal.minute==45)]
 compare = interval.loc[interval['EventCodeID'].isin([81,82])] #finds when detectors are on and off
 #graph a comparison between parameters when the detector is on and off
 #pd.value_counts(compare['Param']).plot.bar(figsize=(35,15))
@@ -117,9 +118,10 @@ test = ks_2samp(compare.count(), car_count.count())
 
 #we need the more info on the parameters to compare
 plt.figure(figsize=(35,15))
-compare_det = compare.loc[compare.Param==2]
+#plt.gca().invert_yaxis()
+compare_det = compare.loc[compare.Param==22]
 compare_det2 = compare.loc[compare.Param==20]
-step(compare_det.Timestamp, compare_det.event)
+step(compare_det.Timestamp, compare_det.event) #looks like on and off are flipped in the graph labels
 #step(compare_det2.Timestamp, compare_det2.event)
 show()
 
