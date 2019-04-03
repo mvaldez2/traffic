@@ -33,6 +33,7 @@ data['event'] = data['EventCodeID'].map(event_codes.set_index('code')['desc']) #
 data['hour'] = data['Timestamp'].dt.hour
 
 
+
 data.event.value_counts() #get the occurrences of events
 #data.event.value_counts().plot(kind='bar', figsize=(30,15)) #plot
 
@@ -66,6 +67,8 @@ signal = data.loc[data.Signal=='CR6 @ CR17', :] #gets one signal
 cycle = signal.loc[signal['EventCodeID'].isin([1,7,8,9,10,11])] #light phases in the signal
 
 lane = cycle.loc[(signal['Param'] == 6)] #gets lane on a signal
+light_count = pd.crosstab(cycle['event'], cycle['Param'])
+light_count.style
 #figure out lane signal pattern  
 
 dur = lane.Timestamp.diff() #time difference between rpw below
@@ -129,4 +132,4 @@ splitf = signal.loc[signal['EventCodeID'].isin([10,43,44])] #finds when the ligh
 split_lane = splitf.loc[(splitf['Param'] == 6) & (splitf.hour==3)] #finds time of day and phase
 step(split_lane.Timestamp, split_lane.EventCodeID)
 splits = split_lane[['Timestamp','event']] #just view timestamp and event
-
+ct = pd.crosstab(splitf['event'], splitf['hour'])
