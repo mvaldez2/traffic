@@ -13,7 +13,7 @@ from matplotlib.pyplot import step, show
 pd.options.display.max_columns = 50
 
 #-------------------- Importing data ------------------------------------------    
-file = 'ECH_2015_01_15_data.csv' #download the huge file
+file = 'ECH_2015_01_15_data.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -31,7 +31,7 @@ data['Signal'] = data['SignalID'].map(signals.set_index('SignalID')['Signal']) #
 data['event'] = data['EventCodeID'].map(event_codes.set_index('code')['desc']) #adds event name column
 #data['day'] = data['Timestamp'].dt.day_name() #used for larger data
 data['hour'] = data['Timestamp'].dt.hour
-data['minute'] = np.where(data['Timestamp'].dt.minute > 45 , 45, 0)
+data['minute'] = np.where(data['Timestamp'].dt.minute > 55 , 45, 0)
 
 
 data.event.value_counts() #get the occurrences of events
@@ -52,7 +52,7 @@ car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title=
 
 car_count.Timestamp.dt.hour.value_counts().sort_index() #number of occurrences in an hour
 
-busy = pd.crosstab(car_count['event'], car_count['Signal'])
+busy = pd.crosstab(car_count['event'], car_count['Signal']) #how busy each signal is
 busy.style
 
 #_______________________________ Analysis _____________________________________
@@ -61,11 +61,11 @@ busy.style
 #    print(row['Timestamp'], row['Signal'])
 
      
-signal = data.loc[data.Signal=='Beck @ CR17', :] #gets one signal 
+signal = data.loc[data.Signal=='CR6 @ CR17', :] #gets one signal 
 #signal.loc[data.EventCodeID==82, :].groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='Signal Detector Counts', kind='bar', y='SignalID', figsize=(10,5))
 
 
-cycle = signal.loc[signal['EventCodeID'].isin([1,7,8,9,10,11])] #light phases in the signal
+cycle = signal.loc[signal['EventCodeID'].isin([1,7,10,11])] #light phases in the signal
 
 lane = cycle.loc[(signal['Param'] == 6)] #gets lane on a signal
 light_count = pd.crosstab(cycle['event'], cycle['Param'])
@@ -74,6 +74,8 @@ light_count.style
 
 dur = lane.Timestamp.diff() #time difference between rpw below
 lane['duration'] = dur.dt.total_seconds().fillna(0).shift(-1)
+lane['duration'].shift(+1)
+view_duration = lane[['Timestamp','event','duration']]
 
 
 
@@ -85,13 +87,13 @@ green_cycle.duration.describe() #5 number summary of green cycle length
 green_cycle.loc[green_cycle.duration>green_cycle.duration.mean(), :] #times the duration is greater than average
 
 #yellow cycle
-yellow_cycle = lane.loc[signal['EventCodeID'].isin([8,9])] #finds yellow light events
+yellow_cycle = lane.loc[signal['EventCodeID'].isin([10])] #finds yellow light events
 yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(35,15), color='y')
 yellow_cycle.duration.describe() #5 number summary of yellow cycle length
 yellow_cycle.loc[yellow_cycle.duration>yellow_cycle.duration.mean(), :] #times the duration is greater than average
 
 #red cycle
-red_cycle = lane.loc[signal['EventCodeID'].isin([10,11])] #finds red light events
+red_cycle = lane.loc[signal['EventCodeID'].isin([11])] #finds red light events
 red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(35,15), color='r')
 red_cycle.duration.describe() #5 number summary of red cycle length
 red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the duration is greater than average
@@ -108,7 +110,7 @@ red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the durati
 
 
 #---------------- Compare detection systems -----------------------------------
-interval = signal.loc[(signal['hour'] == 1) & (signal.minute==45)]
+interval = signal.loc[(signal['hour'] == 6) & (signal.minute==45)] #gets an unterval of time
 compare = interval.loc[interval['EventCodeID'].isin([81,82])] #finds when detectors are on and off
 #graph a comparison between parameters when the detector is on and off
 #pd.value_counts(compare['Param']).plot.bar(figsize=(35,15))
@@ -119,10 +121,10 @@ test = ks_2samp(compare.count(), car_count.count())
 #we need the more info on the parameters to compare
 plt.figure(figsize=(35,15))
 #plt.gca().invert_yaxis()
-compare_det = compare.loc[compare.Param==22]
-compare_det2 = compare.loc[compare.Param==20]
+compare_det = compare.loc[compare.Param==28]
+compare_det2 = compare.loc[compare.Param==17]
 step(compare_det.Timestamp, compare_det.event) #looks like on and off are flipped in the graph labels
-#step(compare_det2.Timestamp, compare_det2.event)
+step(compare_det2.Timestamp, compare_det2.event)
 show()
 
 
