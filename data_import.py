@@ -13,7 +13,7 @@ result = [i for i in glob.glob('*.{}'.format(extension))]
     
 appended_data = []
 for infile in glob.glob('*.{}'.format(extension)):
-    data = pd.read_csv(infile, error_bad_lines=False)
+    data = pd.read_csv(infile, skiprows=8, header=None)
     # store DataFrame in list
     appended_data.append(data)
 # see pd.concat documentation for more info
