@@ -13,7 +13,7 @@ from matplotlib.pyplot import step, show
 pd.options.display.max_columns = 50
 
 #-------------------- Importing data ------------------------------------------    
-file = 'ECH_2015_01_15_data.csv' 
+file = 'appended.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -32,13 +32,16 @@ data['event'] = data['EventCodeID'].map(event_codes.set_index('code')['desc']) #
 #data['day'] = data['Timestamp'].dt.day_name() #used for larger data
 data['hour'] = data['Timestamp'].dt.hour
 data['minute'] = np.where(data['Timestamp'].dt.minute > 55 , 45, 0)
+data['date'] = data['Timestamp'].dt.date
+data['date'] = data['date'].astype('str') 
 
+day = data.loc[data.date=='2019-04-09', :]
 
 data.event.value_counts() #get the occurrences of events
 #data.event.value_counts().plot(kind='bar', figsize=(30,15)) #plot
 
 #-------------------------Counts-----------------------------------------------
-car_count = data.loc[data.EventCodeID==82, :] #dataframe of occurrences of the detector being on
+car_count = day.loc[day.EventCodeID==82, :] #dataframe of occurrences of the detector being on
 
 car_count['Time'] = car_count.Timestamp.dt.time #time column
 
@@ -61,7 +64,7 @@ busy.style
 #    print(row['Timestamp'], row['Signal'])
 
      
-signal = data.loc[data.Signal=='CR6 @ CR17', :] #gets one signal 
+signal = day.loc[day.Signal=='CR6 @ CR17', :] #gets one signal 
 #signal.loc[data.EventCodeID==82, :].groupby(pd.Grouper(key='Timestamp', freq='D')).count().plot(title='Signal Detector Counts', kind='bar', y='SignalID', figsize=(10,5))
 
 
