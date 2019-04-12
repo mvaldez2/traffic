@@ -14,7 +14,7 @@ from matplotlib.pyplot import step, show
 pd.options.display.max_columns = 50
 
 #-------------------- Importing data ------------------------------------------    
-file = 'ECH_2015_01_15_data.csv' 
+file = 'appended.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -36,6 +36,10 @@ data['time'] = data['Timestamp'].dt.time
 
 print(data[['date', 'Signal', 'event','Param']])
 
+#sets signal to dataframe
+#Variables
+#data : dataset
+#signal_name: name of signal
 def set_signal(data, signal_name):
     return data.loc[data.Signal==signal_name, :]
  
@@ -90,7 +94,7 @@ def cycle_length(data, signal, phase):
     red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the duration is greater than average
 
  #---------------- Compare detection systems -----------------------------------    
-def compare(data, signal, det1, det2):
+def compare(data, signal, loop, pod):
    
     compare = data.loc[data['EventCodeID'].isin([81,82])] #finds when detectors are on and off
     #graph a comparison between parameters when the detector is on and off
@@ -99,17 +103,27 @@ def compare(data, signal, det1, det2):
     #we need the more info on the parameters to compare
     plt.figure(figsize=(35,15))
     #plt.gca().invert_yaxis()
-    compare_det = compare.loc[compare.Param==det1]
-    compare_det2 = compare.loc[compare.Param==det2]
-    step(compare_det.Timestamp, compare_det.event) #looks like on and off are flipped in the graph labels
-    step(compare_det2.Timestamp, compare_det2.event)
+    loops = compare.loc[compare.Param == loop,:]
+    dur = loops.Timestamp.diff() #time difference between rpw below
+    loops['duration'] = dur.dt.total_seconds().fillna(0).shift(-1)
+    loops['duration'].shift(+1)
+    pods = compare.loc[compare.Param == pod,:]
+    dur = pods.Timestamp.diff() #time difference between rpw below
+    pods['duration'] = dur.dt.total_seconds().fillna(0).shift(-1)
+    pods['duration'].shift(+1)    
+    step(loops.Timestamp, loops.event) #looks like on and off are flipped in the graph labels
+    step(pods.Timestamp, pods.event)
     show()
+    #find duration of error for both 
+
     
     
     
-    
-    
-    
+ #---------------- Green Arrival ----------------------------------- 
+#only use loops 5
+ #add 5 seconds
+ 
+
     
     
     
