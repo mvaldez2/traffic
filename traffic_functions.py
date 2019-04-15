@@ -14,7 +14,7 @@ from matplotlib.pyplot import step, show
 pd.options.display.max_columns = 50
 
 #-------------------- Importing data ------------------------------------------    
-file = 'appended.csv' 
+file = '2019-04-03.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -114,6 +114,7 @@ def compare(data, signal, loop, pod):
     step(loops.Timestamp, loops.event) #looks like on and off are flipped in the graph labels
     step(pods.Timestamp, pods.event)
     show()
+    print(loops)
     #find duration of error for both 
 
     
