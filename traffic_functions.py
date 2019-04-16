@@ -64,7 +64,7 @@ def traffic(data, signal):
     car_count['Time'] = car_count.Timestamp.dt.time #time column 
     car_count.Timestamp.value_counts().sort_index() #sorts data by timestamp 
     car_count.set_index('Timestamp', drop=False, inplace=True)
-    car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title=signal,kind='bar', y='SignalID', figsize=(25,15)) #number of occurrences in a 15min interval
+    car_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count().plot(title=signal,kind='bar', y='SignalID', figsize=(15,5)) #number of occurrences in a 15min interval
     
  #------------------------ light cycles ----------------------------------------   
 def cycle_length(data, signal, phase):
@@ -76,20 +76,20 @@ def cycle_length(data, signal, phase):
     lane['duration'].shift(+1)
     print(lane[['Timestamp','event','duration']])
     #green cycle
-    green_cycle = lane.loc[s['EventCodeID'].isin([1,7])] #finds green light events
-    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', figsize=(35,15), color='g')
+    green_cycle = lane.loc[s['EventCodeID'].isin([1])] #finds green light events
+    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', figsize=(15,5), color='g')
     green_cycle.duration.describe() #5 number summary of green cycle length
     green_cycle.loc[green_cycle.duration>green_cycle.duration.mean(), :] #times the duration is greater than average
     
     #yellow cycle
     yellow_cycle = lane.loc[s['EventCodeID'].isin([10])] #finds yellow light events
-    yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(35,15), color='y')
+    yellow_cycle.plot(title='Yellow Cycle',x='Timestamp', y='duration', figsize=(15,5), color='y')
     yellow_cycle.duration.describe() #5 number summary of yellow cycle length
     yellow_cycle.loc[yellow_cycle.duration>yellow_cycle.duration.mean(), :] #times the duration is greater than average
     
     #red cycle
     red_cycle = lane.loc[s['EventCodeID'].isin([11])] #finds red light events
-    red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(35,15), color='r')
+    red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(15,5), color='r')
     red_cycle.duration.describe() #5 number summary of red cycle length
     red_cycle.loc[red_cycle.duration>red_cycle.duration.mean(), :] #times the duration is greater than average
 
@@ -101,7 +101,8 @@ def compare(data, signal, loop, pod):
     #pd.value_counts(compare['Param']).plot.bar(figsize=(35,15))
     print(compare[['Timestamp','event','Param']])
     #we need the more info on the parameters to compare
-    plt.figure(figsize=(35,15))
+    plt.figure(figsize=(15,5))
+    
     #plt.gca().invert_yaxis()
     loops = compare.loc[compare.Param == loop,:]
     dur = loops.Timestamp.diff() #time difference between rpw below
@@ -114,25 +115,45 @@ def compare(data, signal, loop, pod):
     step(loops.Timestamp, loops.event) #looks like on and off are flipped in the graph labels
     step(pods.Timestamp, pods.event)
     show()
-    print(loops)
+    
     #find duration of error for both 
+    lp = compare.loc[(compare.Param == pod) | (compare.Param == loop)]
+    diff = lp.loc[lp['EventCodeID'].isin([82])]
+    dur = diff.Timestamp.diff() #time difference between rpw below
+    diff['duration'] = dur.dt.total_seconds().fillna(0).shift(-1)
+    diff['duration'].shift(+1)
+    print(diff[['Timestamp','Param', 'duration']])
+    
 
     
     
     
- #---------------- Green Arrival ----------------------------------- 
+ #--------------------- Green Arrival ----------------------------------- 
+#graph green and not green (binary)
+#for green arrival we would have to check if the detector is on during the time period that the light was green
 #only use loops 5
  #add 5 seconds
- 
+time = time_range(data, '0:00', '23:59')
+green = time.loc[time['EventCodeID'].isin([1, 7]) & (time.Param==7)]
+det = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([5, 30]))]
+arrival = green.append(det)
+arrival.sort_values("Timestamp", inplace=True)    
+print(arrival[['time','event','Param']])
 
+#----------------- Split Failure ----------------------------------------------    
+lights = time.loc[time['EventCodeID'].isin([1, 7, 10, 11]) & (time.Param==7)]
+detectors = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([21, 38]))]
+split = lights.append(detectors)
+split.sort_values("Timestamp", inplace=True)    
+print(split[['time','event','Param']])
     
-    
-    
-    
-    
-    
-    
-    
+def split_failures():    
+    for index, row in split.iterrows():
+        #get vvent
+        #get next event
+        #if light is red count detectors until light is green
+        print(row['time'], row['event'])    
+        
     
     
     
