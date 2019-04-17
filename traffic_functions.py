@@ -133,7 +133,7 @@ def compare(data, signal, loop, pod):
 #for green arrival we would have to check if the detector is on during the time period that the light was green
 #only use loops 5
  #add 5 seconds
-time = time_range(data, '0:00', '23:59')
+time = time_range(data, '15:00', '15:25')
 green = time.loc[time['EventCodeID'].isin([1, 7]) & (time.Param==7)]
 det = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([5, 30]))]
 arrival = green.append(det)
@@ -142,10 +142,12 @@ print(arrival[['time','event','Param']])
 
 #----------------- Split Failure ----------------------------------------------    
 lights = time.loc[time['EventCodeID'].isin([1, 7, 10, 11]) & (time.Param==7)]
-detectors = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([21, 38]))]
+detectors = time.loc[time['EventCodeID'].isin([81,82]) & (time.Param.isin([5, 6, 9, 26, 30, 31, 33]))]
 split = lights.append(detectors)
 split.sort_values("Timestamp", inplace=True)    
-print(split[['time','event','Param']])
+
+with pd.option_context('display.max_rows',None):
+    print(split[['time','event','Param']])
     
 def split_failures():    
     for index, row in split.iterrows():
