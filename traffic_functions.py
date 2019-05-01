@@ -138,7 +138,7 @@ def compare(data, signal_name, loop, pod):
 #for green arrival we would have to check if the detector is on during the time period that the light was green
 #only use loops #5
 #add 5 seconds
-time = time_range(data, '16:00', '16:25')
+time = time_range(data, '00:00', '23:25')
 green = time.loc[time['EventCodeID'].isin([1, 7]) & (time.Param==7)]
 det = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([5, 30]))]
 arrival = green.append(det)
@@ -148,8 +148,8 @@ print(arrival[['time','event','Param']])
 #----------------- Split Failure ---------------------------------------------- 
 #check loop 1
 #if detector is on after red end clearence its a split failure   
-lights = time.loc[time['EventCodeID'].isin([1, 7, 10, 11]) & (time.Param==7)]
-detectors = time.loc[time['EventCodeID'].isin([81,82]) & (time.Param.isin([26, 35]))]
+lights = time.loc[time['EventCodeID'].isin([1, 7, 10, 11]) & (time.Param==4)]
+detectors = time.loc[time['EventCodeID'].isin([81,82]) & (time.Param.isin([25, 40]))]
 split = lights.append(detectors)
 split.sort_values("Timestamp", inplace=True)    
 
@@ -158,8 +158,15 @@ with pd.option_context('display.max_rows',None):
     
   
         
-    
-    
+pattern = np.asarray([11, 81])
+n_obs = len(pattern)
+split_failures = (split['EventCodeID']
+                       .rolling(window=n_obs , min_periods=n_obs)
+                       .apply(lambda x: (x==pattern).all())
+                       .astype(bool)             # All as bools
+                       .shift(-1 * (n_obs - 1))  # Shift back
+                       .fillna(False)            # convert NaNs to False
+                       ).sum()
     
     
     
