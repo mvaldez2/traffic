@@ -14,7 +14,7 @@ from matplotlib.pyplot import step, show
 pd.options.display.max_columns = 50
 
 #-------------------- Importing data ------------------------------------------    
-file = '2019-04-03.csv' 
+file = '2019_04_29.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -23,8 +23,10 @@ event_codes = pd.read_csv(f_event_codes)
 signals = pd.read_csv(f_signals)
 data = pd.read_csv(file)
 
+data.rename(columns={'Event Type':'EventCodeID'}, inplace=True)
+data.rename(columns={'Parameter':'Param'}, inplace=True)
 data.sort_values("Timestamp", inplace=True)
-
+data.insert(loc=0, column='SignalID', value='64AC68A9-A856-4401-A2BF-04F329887DDC') #temp because we're looking at the same signal regardless
 data['Timestamp'] = pd.to_datetime(data.Timestamp) #converts Timestamp to datetime object
 data['Signal'] = data['SignalID'].map(signals.set_index('SignalID')['Signal']) #adds signalid name column
 data['event'] = data['EventCodeID'].map(event_codes.set_index('code')['desc']) #adds event name column
@@ -84,18 +86,18 @@ def traffic(data, signal_name):
 #data : dataframe
 #signal_name: name of signal
 #phase: phase of traffic light
-#ex: cycle_length(data,"CR6 @ CR17", 7)
+#ex: cycle_length(data,"CR6 @ CR17", 2)
 def cycle_length(data, signal_name, phase):
     signal = data.loc[data.Signal==signal_name, :]
     cycle = signal.loc[(signal['EventCodeID'].isin([1,7,10,11])) & (signal['Param'] == phase)] #light phases in the signal
-    dur = cycle.Timestamp.diff() #time difference between rpw below
+    dur = cycle.Timestamp.diff() #time difference between row below
     cycle['duration'] = dur.dt.total_seconds().fillna(0).shift(-1)
     cycle['duration'].shift(+1)
     print(cycle[['Timestamp','event','duration']])
     
     #green cycle
-    green_cycle = cycle.loc[signal['EventCodeID'].isin([1])] #finds green light events
-    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', figsize=(15,5), color='g')
+    green_cycle = cycle.loc[signal['EventCodeID'].isin([1,7])] #finds green light events
+    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', ylabel="duration", figsize=(15,5), color='g')
     
     #yellow cycle
     yellow_cycle = cycle.loc[signal['EventCodeID'].isin([10])] #finds yellow light events
@@ -104,6 +106,7 @@ def cycle_length(data, signal_name, phase):
     #red cycle
     red_cycle = cycle.loc[signal['EventCodeID'].isin([11])] #finds red light events
     red_cycle.plot(title='Red Cycle',x='Timestamp', y='duration', figsize=(15,5), color='r')
+    
 
  #---------------- Compare detection systems -----------------------------------
 #returns graph that compares the activty of a loop detector and a pod detector
@@ -113,7 +116,7 @@ def cycle_length(data, signal_name, phase):
 #pod: pod detectpr
 #ex: compare(data,"CR6 @ CR17", 33, 8)    
 def compare(data, signal_name, loop, pod):
-    compare = data.loc[(data['EventCodeID'].isin([81,82])) & (data.signal==signal_name)] #finds when detectors are on and off
+    compare = data.loc[(data['EventCodeID'].isin([81,82])) & (data.Signal==signal_name)] #finds when detectors are on and off
     print(compare[['Timestamp','event','Param']])
     plt.figure(figsize=(15,5))
     
@@ -143,7 +146,6 @@ green = time.loc[time['EventCodeID'].isin([1, 7]) & (time.Param==7)]
 det = time.loc[time['EventCodeID'].isin([82]) & (time.Param.isin([5, 30]))]
 arrival = green.append(det)
 arrival.sort_values("Timestamp", inplace=True)    
-print(arrival[['time','event','Param']])
 
 #----------------- Split Failure ---------------------------------------------- 
 #check loop 1
