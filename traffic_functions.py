@@ -97,7 +97,7 @@ def cycle_length(data, signal_name, phase):
     
     #green cycle
     green_cycle = cycle.loc[signal['EventCodeID'].isin([1,7])] #finds green light events
-    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', ylabel="duration", figsize=(15,5), color='g')
+    green_cycle.plot(title='Green Cycle', x='Timestamp', y='duration', figsize=(15,5), color='g')
     
     #yellow cycle
     yellow_cycle = cycle.loc[signal['EventCodeID'].isin([10])] #finds yellow light events
