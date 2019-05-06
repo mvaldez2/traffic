@@ -7,9 +7,16 @@ Created on Mon May  6 15:10:42 2019
 
 import pandas as pd
 import os
+import tkFileDialog as filedialog
+from tkFileDialog import askopenfilename
 
-#-------------------- Importing data ------------------------------------------    
-file = '2019_04_29.csv' 
+file = askopenfilename()
+
+#-------------------- Importing data ------------------------------------------
+
+
+    
+#file = '2019_04_29.csv' 
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -33,6 +40,6 @@ data['date'] = data['date'].astype('str')
 data['time'] = data['Timestamp'].dt.time
 
 path = os.path.dirname(os.path.realpath(__file__))
+date = data.date[0]
 
-
-#data.to_csv('C:/Users/transpo/Downloads/traffic-master/traffic-master/appended.csv', index=False) #imports to csv to easily integrate into our script
+data.to_csv(path + '//data' + '.csv', index=False) #imports to csv to easily integrate into our script
