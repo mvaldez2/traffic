@@ -65,7 +65,7 @@ def traffic(data, signal_name):
     vehicle_count.Timestamp.value_counts().sort_index() #sorts data by timestamp 
     vehicle_count.set_index('Timestamp', drop=False, inplace=True)
     group = vehicle_count.groupby(pd.Grouper(key='Timestamp', freq='15min')) #groups occurrences in a 15min interval
-    group.count().plot(title=signal_name, kind='bar', y='event', figsize=(15,5))
+    group.count().plot(title=signal_name, kind='bar', y='event', figsize=(15,5), colormap='Paired')
     
  #------------------------ light cycles ---------------------------------------- 
 #returns graph of cycle lengths in seconds for traffic lights 
@@ -102,6 +102,7 @@ def cycle_length(data, signal_name, phase):
 #pod: pod detectpr
 #ex: compare(data,"CR6 @ CR17", 33, 8)    
 def compare(data, signal_name, loop, pod):
+    data = time_range(data, '04:30', '04:35')
     compare = data.loc[(data['EventCodeID'].isin([81,82])) & (data.Signal==signal_name)] #finds when detectors are on and off
     print(compare[['Timestamp','event','Param']])
     plt.figure(figsize=(15,5))
@@ -155,7 +156,7 @@ def split_failure(data, dets, phase):
     split_count.Timestamp.value_counts().sort_index() #sorts data by timestamp 
     split_count.set_index('Timestamp', drop=False, inplace=True)
     group = split_count.groupby(pd.Grouper(key='Timestamp', freq='15min')).count() #groups occurrences in a 15min interval
-    group.plot(title="Split Failures", kind='bar', y='event', stacked=True, figsize=(15,5))    
+    group.plot(title="Split Failures", kind='bar', y='event', stacked=True, figsize=(15,5), colormap='Paired')    
     group.plot.bar(stacked=True, figsize=(15,5));
 
 #testing stuff
