@@ -7,16 +7,12 @@ Created on Mon May  6 15:10:42 2019
 
 import pandas as pd
 import os
-import tkFileDialog as filedialog
-from tkFileDialog import askopenfilename
+from tkinter.filedialog import askopenfilename
 
-file = askopenfilename()
+
 
 #-------------------- Importing data ------------------------------------------
-
-
-    
-#file = '2019_04_29.csv' 
+file = askopenfilename()
 f_signals = 'signals.csv'
 f_event_codes = 'event_codes.csv'
 
@@ -42,4 +38,11 @@ data['time'] = data['Timestamp'].dt.time
 path = os.path.dirname(os.path.realpath(__file__))
 date = data.date[0]
 
-data.to_csv(path + '//data' + '.csv', index=False) #imports to csv to easily integrate into our script
+outdir = path + '/imported'
+if not os.path.exists(outdir):
+    os.mkdir(outdir)
+
+full_path = os.path.join(outdir, date + '.csv') 
+
+
+data.to_csv(full_path) #imports to csv to easily integrate into our script

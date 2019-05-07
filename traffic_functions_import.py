@@ -10,9 +10,10 @@ from scipy.stats import ks_2samp
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import step, show
+from tkinter.filedialog import askopenfilename
 
 #-------------------- Importing data ------------------------------------------    
-file = 'data.csv' #get imported data
+file = askopenfilename() #get imported data
 
 #turn file into dataframe
 data = pd.read_csv(file)
