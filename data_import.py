@@ -1,6 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 10 15:54:40 2019
+imports data from a folder of csv files
+@author: mvaldez2
+"""
+
 import os
 import glob
-import numpy as np
 import pandas as pd
 
 path = 'T:\SR2\logs\processed'

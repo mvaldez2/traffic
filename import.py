@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon May  6 15:10:42 2019
-
+Imports data from selected csv file
 @author: mvaldez2
 """
 
