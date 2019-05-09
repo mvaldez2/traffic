@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr 10 15:54:40 2019
-
+Main file that contains the functions to analyze the data
 @author: mvaldez2
 """
 
@@ -38,7 +38,7 @@ def time_period(data, start_date, end_date, start_time, end_time):
 
 #-------------------------Counts-----------------------------------------------
 '''
-#returns bar graph of traphic density of a signal per 15 min
+#returns bar graph of traffic density of a signal per 15 min
 data : dataframe
 signal_name: name of signal
 freq: frequency in minutes
@@ -53,7 +53,7 @@ def traffic(data, signal_name, freq):
     group.count().plot(title=signal_name, kind='bar', y='event', figsize=(15,5), colormap='Paired')
 
 '''
-returns bar graph of traphic density of a lane on a signal per 15 min 
+returns bar graph of traffic density of a lane on a signal per 15 min 
 data : dataframe
 signal_name: name of signal
 freq: frequency in minutes
